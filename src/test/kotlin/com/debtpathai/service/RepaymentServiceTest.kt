@@ -3,6 +3,7 @@ package com.debtpathai.service
 import com.debtpathai.dto.RepaymentRequest
 import com.debtpathai.model.Debt
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.math.BigDecimal
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -107,5 +108,20 @@ class RepaymentServiceTest {
 
         assertTrue(result.schedule.isNotEmpty())
         assertTrue(result.months > 0)
+    }
+
+    @Test
+    fun `invalid method should throw error`() {
+        val request = RepaymentRequest(
+            debts = listOf(
+                Debt("Test", BigDecimal(500), BigDecimal(20), BigDecimal(50))
+            ),
+            extraPayment = BigDecimal(100),
+            method = "banana"
+        )
+
+        assertThrows<IllegalArgumentException> {
+            repaymentService.calculateRepaymentPlan(request)
+        }
     }
 }
